@@ -1,3 +1,3 @@
-# dib2x
+# gxworks
 
-See https://dib2x.github.io (= index.html under github.com/dib2x/dib2x.github.io)
+See https://gxworks.github.io (= index.html under github.com/gxworks/gxworks.github.io)
