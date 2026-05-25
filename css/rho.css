@@ -1,0 +1,31 @@
+body {
+    background-color: #efefef;
+}
+
+.myButton {
+    position: absolute;
+    top: 50%;
+    background-color:#48c868;
+    border-radius:28px;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+    font-size:18px;
+    padding:16px 32px;
+    text-decoration:none;
+}
+
+.wrapper {
+    text-align: center;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+li + li {
+  margin-top: 10px;
+}
