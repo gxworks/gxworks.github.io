@@ -1,37 +1,23 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>TimeKeep - sample BWQ project</title>
+    <link rel="stylesheet" href="css/rho.css">
+</head>
 <body>
-<h1>Gxworks Family of Apps</h1>
-<p>
-  ...
-</p>
-<p>
-Each app's project is stored under github.com/gxworks, the shared files are stored under dibdib.sf.net,
-bwq.sf.net and cmy.sf.net. Samples and the overview are available under gxworks.github.io.
-</p>
-<p>
-  Copyright (C) 2016-2026 Roland Horsch &lt; gx work s(at)ma il.de &gt;.
-</p>
-<p>
-Each program is free software, licensed under the GNU General Public License
-version 3. It is distributed WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License (https://www.gnu.org/licenses/gpl.html) for more details.
-</p>
-<p>
-  Cmp. LICENSE file and the compatible full texts under each of the referenced projects.
-</p>
-<p><hr></p>
-<p>
-  (Impressum: IMPRESSUM.md @ github.com/dib2x/dib2x.github.io = <a href="https://github.com/dib2x/dib2x.github.io/blob/main/IMPRESSUM.md">https://github.com/dib2x/dib2x.github.io/blob/main/IMPRESSUM.md</a>)
-</p>
-<script>
-if (Date.parse(document.lastModified) != 0)
-    document.write('<p><small><i>As of (Datum): '
-                   + document.lastModified
-                   + ' (cmp./vgl. www.magentacloud.de/share/x5x-ox77lf)'
-                   + '</i></small>');
-</script>
-
+    <h2 style="margin-left:0.5em">TimeKeep - sample date conversion (BWQ)</h2>
+    <p style="margin:0.5em 1em;font-size:medium;color:#555">Displays dates in five formats: <strong>J2000 seconds</strong> (seconds since J2000.0), <strong>UTC/G/J</strong> (UTC, Gregorian or Julian calendar), <strong>Julian Days</strong>, <strong>ISO week (CAT)</strong> (ISO week date with Civil Atomic Time), and <strong>Civil Atomic Time</strong> (TAI-based atomic time since J2000.0). This data comes with <strong>ABSOLUTELY NO WARRANTY</strong>.</p>
+    <p style="margin:1em 1em 0.5em 1em;font-size:small;color:#555">Enter a date (e.g. <kbd>2002-02-02</kbd>) and click <em>Use date</em> to include it in the table.</p>
+    <div id="app"></div>
+    <p style="margin-top:2em;margin-left:1em;font-size:small;color:#555">Demonstrates DateFunc time/date conversions from the BWQ Java library, compiled to JS via J2CL.</p>
+    <hr style="margin:1em">
+    <footer style="margin-left:1em;font-size:x-small;color:#888">
+        <p>Copyright &copy; 2016-2026 Roland Horsch — GPLv3-or-later. <strong>ABSOLUTELY NO WARRANTY.</strong></p>
+        <p>Impressum: <a href="https://github.com/dib2x/dib2x.github.io/blob/main/IMPRESSUM.md">github.com/dib2x/dib2x.github.io</a></p>
+    </footer>
+    <script src='bwq/bwq-sample.js'></script>
+    <!-- AI-assisted note: This page and the JS demo were developed with AI assistance (opencode / big-pickle, 2026-05-24). Key prompts: "create a script that collects the relevant files from src into the target folder", "add information about the displayed date formats", "add AI assistance notes". -->
+    <p style="margin-left:1em;font-size:x-small;color:#888">Created with AI assistance — see HTML source and bwq.sf.net for details.</p>
+    <p style="margin-left:1em;font-size:x-small;color:#888">Special thanks to Francesco Galgani for the jumpstarter: www.baeldung.com/java-j2cl-intro.</p>
 </body>
 </html>
