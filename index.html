@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<!-- AI-assisted: page layout, JS demo, date format descriptions (opencode / big-pickle, 2026-05-24). Reviewed 2026-05-26 by Roland Horsch. -->
 <head>
     <title>TimeKeep - sample BWQ/ gxworks project</title>
     <link rel="stylesheet" href="css/rho.css">
@@ -7,18 +8,23 @@
 <body>
     <h2 style="margin-left:0.5em">TimeKeep - sample date conversion <span style="font-size:0.7em;font-weight:normal">(BWQ v. 0.26.22)</span></h2>
     <p style="margin:0.5em 1em;font-size:medium;color:#555">Displays dates in five formats: <strong>J2000 seconds</strong> (seconds since J2000.0), <strong>UTC/G/J</strong> (UTC, Gregorian or Julian calendar), <strong>Julian Days</strong>, <strong>ISO week (CAT)</strong> (ISO week date based on atomic time), and <strong>Civil Atomic Time</strong> (TAI-based atomic time since J2000.0). This data comes with <strong>ABSOLUTELY NO WARRANTY</strong>. Be aware of possible rounding errors.</p>
-    <p style="margin:1em 1em 0.5em 1em;font-size:small;color:#555">This page is a first sample of projects from bwq.sf.net and github.com/gxworks. For an overview see: <a href="overview.html">overview.html</a>.</p>
+    <p style="margin:1em 1em 0.5em 1em;font-size:small;color:#555">This page is a first sample of projects from bwq.sf.net and github.com/gxworks.
+    For an overview see: <a href="overview.html">overview.html</a>
+    &mdash; for more details: <a href="timekeeping.ai.html">timekeeping.</a></p>
+    </p>
     <p style="margin:1em 1em 0.5em 1em;font-size:small;color:#555">Enter a date (e.g. <kbd>2002-02-02</kbd>) and click <em>Use date</em> to include it in the table.</p>
     <div id="app"></div>
     <p style="margin-top:2em;margin-left:1em;font-size:small;color:#555">Demonstrates DateFunc time/date conversions from the BWQ Java library, compiled to JS via J2CL.</p>
     <hr style="margin:1em">
+    <script src='bwq/bwq-sample.js'></script>
     <footer style="margin-left:1em;font-size:x-small;color:#888">
         <p>Copyright &copy; 2016-2026 Roland Horsch — GPLv3-or-later. <strong>ABSOLUTELY NO WARRANTY.</strong></p>
-        <p>Impressum: <a href="https://github.com/dib2x/dib2x.github.io/blob/main/IMPRESSUM.md">github.com/dib2x/dib2x.github.io</a></p>
+        <p>Impressum:
+        <a href="https://github.com/dib2x/dib2x.github.io/blob/main/IMPRESSUM.md">https://github.com/dib2x/dib2x.github.io/blob/main/IMPRESSUM.md</a>
+        (vgl. https://magentacloud.de/s/29EPcM7DTJSbq87)
+        </p>
     </footer>
-    <script src='bwq/bwq-sample.js'></script>
-    <!-- AI-assisted note: This page and the JS demo were developed with AI assistance (opencode / big-pickle, 2026-05-24). Key prompts: "create a script that collects the relevant files from src into the target folder", "add information about the displayed date formats", "add AI assistance notes". -->
-    <p style="margin-left:1em;font-size:x-small;color:#888">Created with AI assistance — see HTML source and bwq.sf.net for details.</p>
     <p style="margin-left:1em;font-size:x-small;color:#888">Special thanks to Francesco Galgani for the jumpstarter: www.baeldung.com/java-j2cl-intro.</p>
+    <p style="margin-left:1em;font-size:x-small;color:#888">Created with AI assistance &mdash; see HTML source for details, and <a href="ai_disclosure.ai.html">AI disclosure conventions</a>.</p>
 </body>
 </html>
