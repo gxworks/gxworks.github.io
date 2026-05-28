@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<!-- AI-generated: timekeeping concepts page, initial content, UTC problem section, tick/JD clarifications
+     (opencode / big-pickle, 2026-05-26).
+     Reviewed and updated 2026-05-27 by Roland Horsch.
+     HT calendar/time notations, CAT, ISO weeks on TAI, 13-month calendar
+     (opencode / big-pickle, 2026-05-27).
+     Reviewed 2026-05-27 by Roland Horsch.
+     delta-T long-term formula explanation, both formulas documented
+     (opencode / big-pickle, 2026-05-28).
+     Reviewed 2026-05-28 by Roland Horsch.
+     Saint-Exupéry quote, consistency checks table, CAT offset example with 2100
+     and conventional-choice clarification, HT calendar overview/comparison table
+     with columns UTC/ISO weeks/CAT/Weeks (HT)/13-month (HT), 2200 sample row
+     (opencode / big-pickle, 2026-05-28).
+     Reviewed 2026-05-28 by Roland Horsch.
+-->
+<head>
+    <title>Timekeeping concepts — BWQ chronology &amp; units</title>
+    <link rel="stylesheet" href="css/rho.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { max-width: 56em; margin: 1em auto; padding: 0 1em; line-height: 1.5; }
+        h2 { margin-top: 1.5em; border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        h3 { margin-top: 1.2em; }
+        table { border-collapse: collapse; margin: 1em 0; font-size: 0.9em; }
+        th, td { border: 1px solid #bbb; padding: 0.4em 0.7em; text-align: left; }
+        th { background: #ddd; }
+        code, kbd { background: #e8e8e8; padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.92em; }
+        pre { background: #e8e8e8; padding: 0.6em 1em; border-radius: 4px; overflow-x: auto; font-size: 0.88em; }
+        .note { color: #555; font-size: 0.9em; margin: 1em 0; }
+    </style>
+</head>
+<body>
+
+<h1>Timekeeping concepts implemented in BWQ</h1>
+
+<blockquote style="font-style:italic;color:#555;border-left:3px solid #ccc;margin:1em 0;padding:0.5em 1em;">
+&ldquo;Perfection is achieved, not when there is nothing more to add,
+but when there is nothing to take away.&rdquo;<br>
+&mdash; Antoine de Saint-Exup&eacute;ry
+</blockquote>
+
+<p class="note">This page explains the chronology model and time units used by the
+BWQ library. &mdash; <a href="index.html">back to demo</a></p>
+<p></p>
+<p>
+Astronomical and civil timekeeping rests on a few standard scales.
+<strong>TAI</strong> (International Atomic Time) is the continuous,
+uniform count of SI seconds since 1958, derived from atomic clocks.
+<strong>TT</strong> (Terrestrial Time) is TAI + 32.184&thinsp;s, the
+theoretical ideal clock matching proper time at mean sea level. <strong>UT1</strong>
+(Universal Time) follows Earth's irregular (!) rotation &mdash; a UT1 day
+varies by a few milliseconds from 86,400&thinsp;s. <strong>UTC</strong>
+(Coordinated Universal Time) stays within ±0.9&thinsp;s of UT1 by inserting
+leap seconds, breaking (!) the uniform SI-second count.
+<strong>J2000.0</strong> (JD 2451545 TT) is the standard reference epoch
+for modern astronomical time scales, serving as BWQ's base for the calculation of times and durations.
+</p>
+
+<table>
+<tr><th>Scale</th><th>Uniform?</th><th>Base unit</th><th>Offset from TT</th></tr>
+<tr><td>TT (Terrestrial Time)</td><td>Yes</td><td>SI second</td><td>&mdash;</td></tr>
+<tr><td>TAI (International Atomic Time)</td><td>Yes</td><td>SI second</td><td>&minus;32.184&thinsp;s</td></tr>
+<tr><td>GPS time</td><td>Yes</td><td>ticks of 1.5 seconds</td><td>&minus;51.184&thinsp;s (= &minus;19&thinsp;s &minus; 32.184&thinsp;s)</td></tr>
+<tr><td>UT1 (Universal Time)</td><td>No</td><td>variable day</td><td>&minus;delta-T</td></tr>
+<tr><td>UTC (Coordinated Universal Time)</td><td>No</td><td>SI second, non-linear</td><td>&minus;(32.184 + cum. leap sec)</td></tr>
+<tr><td>Unix millis</td><td>No</td><td>msec, non-linear</td><td>(like UTC with offset)</td></tr>
+</table>
+<p>
+All arithmetic in BWQ &mdash; durations, intervals, date projections &mdash;
+uses TT seconds from J2000.  The Unix-millis epoch (1970-01-01T00:00:00&thinsp;UTC) is used for
+system-clock I/O and local time calculations.
+</p>
+
+<h2>The problem with UTC time periods</h2>
+<p>
+Because leap seconds are inserted (or, in principle, could be removed) at irregular
+intervals, a <strong>UTC day is not always 86,400 SI seconds long</strong>.  The
+last minute of a leap-second day has 61 seconds.  This seemingly small discrepancy
+&mdash; just <strong>1 part in 86,400</strong> &mdash; can be destructive for
+any system that relies on precise duration arithmetic:
+</p>
+<ul>
+  <li><strong>GPS and satellite navigation:</strong> a timing error of 1&thinsp;μs
+      causes a ~300&thinsp;m position error.  An uncorrected 1&thinsp;s error
+      would make GPS navigation impossible &mdash; the satellites broadcast their
+      clock corrections in GPS time (continuous, no leap seconds), not UTC.</li>
+  <li><strong>High-frequency trading:</strong> millisecond and microsecond
+      timestamps determine trade ordering.  A leap-second ambiguity can cause
+      trades to be sequenced incorrectly across the discontinuity.</li>
+  <li><strong>Network time (NTP):</strong> NTP handles leap seconds by slewing
+      or stepping the clock.  A step can trigger false-positive alarms in
+      monitoring, disrupt authentication etc.</li>
+  <li><strong>No extension:</strong> UTC cannot be uniquely
+      extrapolated into the future (or distant past) because the leap-second schedule
+      is unpredictable.</li>
+  <li><strong>Non-monotonic real-time clocks:</strong> some systems repeat
+      23:59:59 or insert 23:59:60, causing confusion in logging, certificate
+      validation, and file timestamps.</li>
+</ul>
+<p>
+Actual outages caused by the 2012-06-30 and 2015-06-30 leap seconds include
+Linux kernel hangs (due to a bug in the <code>hrtimer</code> code), the Qantas
+check-in system going offline for hours, Reddit being unreachable, and various
+Java JVM soft-hang issues in applications that called
+<code>System.currentTimeMillis()</code> in a tight loop (cmp. the 'Leap second'
+article of Wikipedia).
+</p>
+<p>
+BWQ addresses these problems by basing all internal computation on <strong>TT seconds
+with a J2000 offset</strong>: count of seconds since J2000
+(<code>double</code>, D4-encoded) plus higher-precision ticks (nanobis) (<code>long</code>, 2<sup>30</sup>&thinsp;Hz)
+as the two native representations.  UTC is handled via conversions with estimated delta-T.
+The library calculates and projects (pre-1958 and post-2026) delta-T values,
+allowing approximate conversions for ancient and future calendar dates where
+the precise leap-second schedule is unpredictable, unknown or not applicable.
+</p>
+
+<h2>Reference epoch: J2000.0 (TT2000E12)</h2>
+<p>
+All time scales in BWQ anchor to <strong>J2000.0</strong> (also called TT2000E12),
+the Terrestrial Time instant of the 2000 January 1 noon (JD 2451545.0 TT).
+This is the fundamental epoch &mdash; every internal tick is measured as SI seconds
+(plus fractional values) since TT2000E12.
+</p>
+<table>
+<tr><th>Epoch property</th><th>Value</th></tr>
+<tr><td>Julian Day (shifted as TT)</td><td>2451545</td></tr>
+<tr><td>Unix millis (UTC)</td><td>946,727,935,816&thinsp;ms</td></tr>
+<tr><td>Calendar (Gregorian)</td><td>2000-01-01T11:58:55.816&thinsp;UTC</td></tr>
+<tr><td>Calendar (TAI)</td><td>2000-01-01T11:59:27.816&thinsp;TAI</td></tr>
+<tr><td>delta-T (TT &minus; UT1) at epoch</td><td>63.8285&thinsp;s</td></tr>
+<tr><td>TT &minus; TAI</td><td>32.184&thinsp;s (fixed)</td></tr>
+<tr><td>TT &minus; UTC at epoch</td><td>64.184&thinsp;s (= 32&thinsp;leap&thinsp;s + 32.184)</td></tr>
+<tr><td>HT era year</td><td>2000.0</td></tr>
+</table>
+
+<h2>Era Day 0 and tick 0</h2>
+<p>
+The HT-16 timeline starts at <strong>tick 0</strong>, which precedes J2000 by
+63,116,300,000 SI seconds (exactly 2000 years of 31,558,150&thinsp;s each, as an intentionally rounded value for the sidereal year).
+Era Day 0 (ED 0 = JD 1721033) falls about 73,800&thinsp;s after tick 0 (due to Earth's actual rotation), at a Sunday noon.
+The era-year notation <strong>Y0</strong> refers to this same ticking (Y2000.0 = J2000), which is
+different from the proleptic Gregorian year 0 (1&thinsp;BC) due to the sidereal count. The link
+between the HT-16 calendar with its time notations and Earth's rotation (UT1) is not broken, not even for
+future or distant dates, and the duration arithmetic is preserved.
+</p>
+<table>
+<tr><th>Reference</th><th>JD</th><th>Offset from tick 0</th></tr>
+<tr><td>Tick 0 (= Y0.0)</td><td>≈ 1,721,032.146</td><td>0</td></tr>
+<tr><td>ED 0 (Era Day 0)</td><td>1,721,033</td><td>≈ 73,800&thinsp;s</td></tr>
+<tr><td>0001-MAR-1 (Julian)</td><td>1,721,425.5</td><td>≈ 33,985,800&thinsp;s</td></tr>
+<tr><td>J2000.0 (TT2000E12)</td><td>2,451,545</td><td>63,116,300,000&thinsp;s</td></tr>
+</table>
+
+<h2>HT calendar and time notations</h2>
+
+<h3>Overview</h3>
+<p>
+The HT system defines three complementary time notations, all sharing the same
+continuous TT-based timescale and differing only in how the date is structured.
+The following table compares them with UTC and ISO weeks:
+</p>
+
+<table>
+<tr><th>Feature</th><th>UTC</th><th>ISO weeks</th><th>CAT</th><th>Weeks (HT)</th><th>13-month (HT)</th></tr>
+<tr><td>Timescale</td><td>TAI + leap seconds</td><td>Same as UTC</td><td>TT (continuous SI seconds)</td><td>Same as CAT</td><td>Same as CAT</td></tr>
+<tr><td>Leap seconds</td><td>Yes (irregular)</td><td>Yes</td><td>None</td><td>None</td><td>None</td></tr>
+<tr><td>Monotonic</td><td>No (steps &amp; repeats)</td><td>No</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>Future-predictable</td><td>No (leap-schedule unknown)</td><td>No</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>Week numbers</td><td>ISO 8601 (UTC-based)</td><td>Same as UTC</td><td>Adapted ISO</td><td>Identical to ISO for 21st&nbsp;c., extends indefinitely</td><td>Same (adapted ISO)</td></tr>
+<tr><td>Month scheme</td><td>Gregorian (28&ndash;31 days)</td><td>N/A (week-based)</td><td>Gregorian (CAT date)</td><td>N/A (week-based)</td><td>12&times;28&thinsp;d + Exember (4&ndash;5 weeks)</td></tr>
+<tr><td>Year scheme</td><td>Tropical (365.242&hellip; days, Gregorian leap rule)</td><td>Same as UTC</td><td>Tropical (Gregorian date display)</td><td>Sidereal (31,558,150&thinsp;s, leap weeks)</td><td>Same as weeks (HT)</td></tr>
+<tr><td>Timezone marker</td><td>UTC offset (whole hours)</td><td>UTC offset (whole hours)</td><td>TT-anchored (&plusmn;hh:mm, reflects delta-T)</td><td>Same as CAT</td><td>Same as CAT</td></tr>
+<tr><td>Disadvantages</td><td>Leap-second complexity, non-monotonic, not future-predictable; long-term changes of tropical year</td><td>Same as UTC, plus week-based dates less intuitive for month/day lookups</td><td>Long-term changes of tropical year; unfamiliar offset notation</td><td>Seasons slowly drift over centuries (sidereal year); week-based date less intuitive</td><td>Seasons slowly drift over centuries (sidereal year); 13-month scheme unfamiliar; Exember length varies</td></tr>
+<tr><td>Sample (J2000)</td><td>2000-01-01T11:58:55.816Z</td><td>1999-52-6</td><td>2000-01-01C11:59+11:59</td><td>1999-52-6W11:59</td><td>1999-13-27H11:59+11:59</td></tr>
+<tr><td>Sample (2200)</td><td>2200-01-01T00:00??</td><td>2199-53-3</td><td>2200-01-01C00:00+11:55</td><td>2199-53-3W00:00</td><td>2199-13-31H00:00+11:55</td></tr>
+</table>
+
+<h3>CAT &mdash; suggested Civil Atomic Time</h3>
+<p>
+<strong>CAT</strong> (Civil Atomic Time) is a proposed uniform civil time scale
+that runs at exactly the TAI rate (continuous SI seconds, no leap seconds).
+Unlike UTC, CAT never inserts or removes seconds &mdash; it is monotonic and
+predictable indefinitely.  CAT is based on <strong>J2000</strong> and uses a
+<strong>timezone marker</strong> that follows TT (Terrestrial Time), not UTC.
+The displayed time therefore differs from UTC by up to roughly 30&thinsp;s
+(the current delta-T between TT and UT1), without the complexity of leap-second
+announcements.  Other time zones get marked accordingly (e.g. +11:59 ~ GMT,
++12:59 ~ Amsterdam, +13:59 ~ Pretoria etc.).
+Because CAT uses TT-anchored timezones, the physical instant
+is always precisely defined &mdash; even if the HT-16 projection
+for delta-T is used, and even if Earth's rotation turns out to be significantly
+different from the projection, it remains more than enough in sync with the actual days
+and the underlying value remains precise.
+</p>
+<p>
+For example, the J2000 epoch, which is defined as <strong>2000-01-01T11:58:55.816+00:00 (UTC)</strong>, can be written as
+<strong>2000-01-01C11:59:00.000+11:59</strong>, which is exactly the same instant as
+<code>2000-01-01C12:00+12:00</code> or <code>2000-01-01C11:58+11:58</code> &mdash;
+the offset adjusts the civil clock face, not the underlying J2000 tick.  The
+current convention <strong>2000-01-01C11:59+11:59</strong> is chosen because
+it gets closest to the current UTC system: 11:59 is the rounded delta-T value
+with the 12-hour offset between JD numbering and midnight.
+</p>
+<p>
+As delta-T grows, the offset decreases: for example, the projected value for
+2100 is <strong>2099-12-31C23:59:31+11:57</strong> (offset +11:57 instead of +11:59).
+If the actual delta-T in 2100 turns out smaller than projected, the community
+would simply pick the rounded minute that fits (i.e. <strong>2100-01-01C00:00:31+11:58</strong>) &mdash; the offset is a conventional
+choice aligning daytime, not locked to the projection, and does not affect the
+underlying J2000 tick.
+</p>
+
+<h3>Weeks</h3>
+<p>
+The HT calendar defines weeks that are <strong>numerically identical to ISO
+8601 week numbers for the 21st century</strong>.  A week runs Monday&ndash;Sunday,
+and week&nbsp;1 of any HT year contains the first Thursday of that year, exactly
+as ISO&nbsp;8601 specifies.  The crucial difference is that the underlying
+timescale is <strong>TAI-based (continuous)</strong> rather than UTC &mdash;
+there is no leap-second discontinuity to shift the week boundary.  This means
+that for the entire 21st century, software using HT weeks will produce the
+same week numbers as ISO&nbsp;8601, but the definition holds for any past or
+future date without depending on an unpredictable leap-second schedule.
+</p>
+
+<h3>13-month calendar</h3>
+<p>
+The HT weekly calendar can be projected onto a <strong>13-month scheme</strong> where
+the first 12 months have exactly 28&thinsp;days (4 weeks each).  The
+<strong>13th month</strong> ('Exember') sits at the end of the year and contains either
+<strong>4 or 5 weeks</strong> (28 or 35&thinsp;days), matching the HT week
+count for that year &mdash; nothing else is inserted.  Because the first 12
+months are exactly 4 weeks each, the day-of-week repeats identically from
+month to month, greatly simplifying recurring schedules.  The 13-month layout
+is an alternative view of the same HT day count ('ED') &mdash; no additional leap
+rules are needed. The underlying era-day projection, in sync with Julian Days, is used as a convention
+for upcoming dates, but the physically precise timing does not depend on that:
+the time (hh:tt:ss) uses the same notation as CAT (Gregorian) and the weekly calendar (sidereal).
+</p>
+
+<table>
+<tr><th>Feature</th><th>UTC</th><th>ISO weeks</th><th>CAT</th><th>Weeks (HT)</th><th>13-month (HT)</th></tr>
+<tr><td>Timescale</td><td>TAI + leap seconds</td><td>Same as UTC</td><td>TT (continuous SI seconds)</td><td>Same as CAT</td><td>Same as CAT</td></tr>
+<tr><td>Leap seconds</td><td>Yes (irregular)</td><td>Yes</td><td>None</td><td>None</td><td>None</td></tr>
+<tr><td>Monotonic</td><td>No (steps &amp; repeats)</td><td>No</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>Future-predictable</td><td>No (leap-schedule unknown)</td><td>No</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<h2>Time units</h2>
+
+<h3>HT-16 year-seconds years</h3>
+<p>
+The HT-16 (Hemera Time) model uses a <strong>fixed sidereal year</strong> of exactly
+<strong>31,558,150 SI seconds</strong>. One HT year is <em>not</em> a calendar year of
+varying length (like the tropical year) &mdash; it is a pure count of seconds, making it suitable for precise
+arithmetic over centuries.  An era year <var>Y</var> satisfies:
+</p>
+<pre>tt_seconds_since_j2000 = (Y &minus; 2000) &times; 31,558,150</pre>
+
+<h3>Unix millis (UTC)</h3>
+<p>
+Standard Unix time: milliseconds since 1970-01-01T00:00:00&thinsp;UTC, which causes
+the mentioned UTC issues. It is used for conversions between J2000, UTC and current local time.
+</p>
+
+<h3>Nanobis (2<sup>30</sup>&thinsp;Hz)</h3>
+<p>
+The <em>nanobis</em> count is the finest-granularity time unit: <strong>1,073,741,824
+counts per SI second</strong> (2<sup>30</sup>&thinsp;Hz, about 0.931&thinsp;ns per
+tick).  Nanobis counters start at TT2000E12 and are used for monotonic linearised
+timekeeping via <code>TimerNano.currentTimeNanobisLinearized()</code>.
+They are not commonly used and therefore have to be derived from Unix millis.
+</p>
+<h3>Julian Days (JD)</h3>
+<p>
+The continuous day count used in astronomy.  BWQ converts between J2000 ticks and
+JD via era days with delta-T projection or common delta-T estimation (especially
+for past dates).
+</p>
+
+<h3>Era Days (ED)</h3>
+<p>
+Era Days is the day count starting on JD 1,721,033 = ED 0 (internally using the projected UT day length:
+LOD drift/ delta-T: see below).  The conversion applies an accumulated correction
+that accounts for the slowing of Earth's rotation:
+</p>
+<pre>eraDayProj = 730,512 + ticks / 86,400 &minus; correction</pre>
+<p>
+where 730,512 is the era-day count from ED&nbsp;0 to J2000.
+</p>
+
+<h2>Length of Day (LOD) increase</h2>
+<p>
+Earth's rotation is slowing due to tidal friction etc.  The HT-16 model projects a
+<strong>linear increase of 16&thinsp;ms per millennium</strong>, referenced to the
+year 1900 (which is not accurate, but matches current LOD values quite well, and
+does not hurt at all, neither for the HT-16 calendar nor for the time notation):
+</p>
+<pre>lod_micros(year) = 86,400,000,000 + (year &minus; 1900) &times; 16</pre>
+<table>
+<tr><th>Year</th><th>Projected LOD</th><th>Excess over 86,400&thinsp;s</th></tr>
+<tr><td>0 (Y0)</td><td>86,399.9696&thinsp;s</td><td>&minus;30.4&thinsp;ms</td></tr>
+<tr><td>1900</td><td>86,400.0000&thinsp;s</td><td>0</td></tr>
+<tr><td>2000</td><td>86,400.0016&thinsp;s</td><td>+1.6&thinsp;ms</td></tr>
+<tr><td>2025</td><td>86,400.0020&thinsp;s</td><td>+2.0&thinsp;ms</td></tr>
+<tr><td>2100</td><td>86,400.0032&thinsp;s</td><td>+3.2&thinsp;ms</td></tr>
+</table>
+<p>
+This means that a UT day was shorter than 86,400&thinsp;s in the distant past and
+grows longer over time.  The cumulative effect &mdash; the difference between
+uniform TT and irregular UT1 &mdash; is <strong>delta-T</strong>.
+</p>
+
+<h2>More details</h2>
+<h3>Delta-T (TT &minus; UT1)</h3>
+<p>
+Delta-T is the accumulated difference between uniform Terrestrial Time (TT) and
+irregular Universal Time (UT1, based on Earth's rotation).  BWQ uses a piecewise
+polynomial model (<code>DateFunc.deltaTEst_1600_2050</code>) with 14 segments
+from 1600 to 2050, blending into long-term parabolic extrapolation beyond:
+</p>
+<pre>deltaT &le; &minus;20 + 32 &times; ((y &minus; 1820) / 100&thinsp;)²   [commonly cited value as upper bound]</pre>
+<p>
+The internally used long-term formula differs: its reference year is <strong>1900</strong>
+(the parabola's top), considering the observed delta-T value of 0 near 1900
+and aligning with both the HT-16 LOD reference and the generally assumed values for the year 0 (1&nbsp;BC).  The parabolic coefficient (30 instead of 32) and
+constant offset (+30 instead of &minus;20) produce a good practical approximation for
+quite a range including years Y0 to Y3000:
+</p>
+<pre>deltaT &asymp; 30 &times; ((y &minus; 1900) / 100&thinsp;)² + 30   [used for practical reasons by BWQ, especially: y &lt;&nbsp;1600 and y &gt;&nbsp;2050]</pre>
+<p>
+Values between 1600 and 2050 use the piecewise polynomial; transition segments
+blend between the polynomial and this parabola for 2016&ndash;2100 and
+&minus;1000&ndash;&minus;600.  The <code>picked/DeltaT.java</code> file (ported from
+van Gent's webspace) provides 15 historical formula variants for comparison:
+JPL/Horizons, IAU 1952, MS 1982, Stephenson-Morrison 2006, and others.
+</p>
+
+<h3>Delta-T-UTC (TT &minus; UTC) and leap seconds</h3>
+<p>
+UTC differs from TT by the sum of the fixed offset TT&minus;TAI (32.184&thinsp;s)
+and the cumulative leap seconds (37 as of 2025).  The conversion is simply:
+</p>
+<pre>TT &minus; UTC = 32.184&thinsp;s + cumulative_leap_seconds</pre>
+<p>
+Cumulative leap seconds since 1972 are stored in a half-yearly lookup table
+(<code>kLeapSecs_1970</code> in <code>DateFunc.java</code>), and interpolated
+for 1958&ndash;1972 via a &ldquo;rubber seconds&rdquo; linear ramp.
+</p>
+<table>
+<tr><th>Year</th><th>Leap seconds (cum.)</th><th>TT&minus;UTC (s)</th></tr>
+<tr><td>1972</td><td>10</td><td>42.184</td></tr>
+<tr><td>2000</td><td>32</td><td>64.184</td></tr>
+<tr><td>2010</td><td>34</td><td>66.184</td></tr>
+<tr><td>2025</td><td>37</td><td>69.184</td></tr>
+</table>
+<p>
+The leap-second count is currently frozen at 37 in the codebase; values beyond
+2026 default to this count.  The horizon year for planned leap-second
+discontinuation is stored as <code>TIME_DELTA_NANOTIMER_USAGE = 2049</code>.
+</p>
+
+<h3>Hash62 Encoding (62-bit)</h3>
+<p>
+BWQ encodes a J2000 tick value, fractional nanobis, time-zone offset, and
+leap-second-of-day flag into 62 bits of a <strong>sortable long</strong>
+(cmp. <code>convert4Hash62_d4</code>).  The bit layout preserves sort order: lexicographic
+ordering of the 62 bit encoding corresponds to chronological order and is
+fairly precise (not as precise as nanobis).
+</p>
+
+<h3>Consistency checks (output of <code>run-sample.sh</code>)</h3>
+<p>
+The sample program output matches the documented chronology model:
+</p>
+<table>
+<tr><th>Claim</th><th>Expected (HTML)</th><th>Actual (output)</th><th>Result</th></tr>
+<tr><td>J2000 UTC</td><td>2000-01-01T11:58:55.816</td><td>2000-01-01T11:58:55.816</td><td style="color:#070">✓</td></tr>
+<tr><td>J2000 CAT</td><td>2000-01-01C11:59+11:59</td><td>2000-01-01C11:59+11:59</td><td style="color:#070">✓</td></tr>
+<tr><td>Tick 0 JD</td><td>≈ 1,721,032.146</td><td>1,721,032.146&hellip;</td><td style="color:#070">✓</td></tr>
+<tr><td>ED 0 JD</td><td>1,721,033</td><td>1,721,033.000&hellip;</td><td style="color:#070">✓</td></tr>
+<tr><td>1900 CAT offset</td><td>+12:00 (low delta-T)</td><td>+12:00</td><td style="color:#070">✓</td></tr>
+<tr><td>2100 CAT offset</td><td>decreases as delta-T grows</td><td>+11:57</td><td style="color:#070">✓</td></tr>
+<tr><td>1582 calendar</td><td>Gregorian switch at 1582-10</td><td>G for 1582-10-15, J for 1582-10-03J</td><td style="color:#070">✓</td></tr>
+</table>
+
+<hr style="margin:1em 0">
+<footer style="font-size:x-small;color:#888">
+    <p>Copyright &copy; 2016-2026 Roland Horsch &mdash; GPLv3-or-later.
+    <strong>ABSOLUTELY NO WARRANTY.</strong></p>
+    <p>Impressum:
+    <a href="https://github.com/dib2x/dib2x.github.io/blob/main/IMPRESSUM.md">https://github.com/dib2x/dib2x.github.io/blob/main/IMPRESSUM.md</a>
+    (vgl. https://magentacloud.de/s/29EPcM7DTJSbq87).
+    </p>
+</footer>
+<p style="font-size:x-small;color:#888">Created with AI assistance &mdash; see HTML source for details, and <a href="ai_disclosure.ai.html">AI disclosure conventions</a>.</p>
+
+</body>
+</html>
