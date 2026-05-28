@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<!-- AI-generated: AI disclosure conventions page (opencode / big-pickle, 2026-05-27). Reviewed 2026-05-27 by Roland Horsch. -->
+<head>
+    <title>AI disclosure conventions — BWQ</title>
+    <link rel="stylesheet" href="css/rho.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { max-width: 56em; margin: 1em auto; padding: 0 1em; line-height: 1.5; }
+        h2 { margin-top: 1.5em; border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        h3 { margin-top: 1.2em; }
+        table { border-collapse: collapse; margin: 1em 0; font-size: 0.9em; }
+        th, td { border: 1px solid #bbb; padding: 0.4em 0.7em; text-align: left; }
+        th { background: #ddd; }
+        code, kbd { background: #e8e8e8; padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.92em; }
+        pre { background: #e8e8e8; padding: 0.6em 1em; border-radius: 4px; overflow-x: auto; font-size: 0.88em; }
+        .note { color: #555; font-size: 0.9em; margin: 1em 0; }
+    </style>
+</head>
+<body>
+
+<h2>AI disclosure conventions used in the repositories</h2>
+
+<p>Files that are fully AI-generated (like this one) have the suffix '_AI' or '.ai' in their
+filename, and carry a source header noting the tool, date, reviewing status, and
+key phrases of the prompts.  Files that received AI-assisted edits note the same info near
+the changed lines.  The only exception is AGENTS.md, necessarily: no suffix for the file name.</p>
+
+<p>Common alternatives seen elsewhere:</p>
+
+<table>
+<tr><th>Approach</th><th>Pro</th><th>Con</th></tr>
+<tr><td>Co-authored-by: AI &lt;...&gt; in commit trailers</td><td>Blocks in git history</td><td>Invisible outside git log/blame</td></tr>
+<tr><td>Header comment only (no suffix)</td><td>Less rename churn</td><td>Not visible in ls/glob</td></tr>
+<tr><td>Git commit prefix "[ai]"</td><td>Ties metadata to commits</td><td>Doesn't mark individual files</td></tr>
+<tr><td>.gitattributes linguist-generated</td><td>Hides from diff stats</td><td>No provenance info</td></tr>
+<tr><td>No convention at all</td><td>Zero overhead</td><td>No audit trail at all</td></tr>
+</table>
+
+<p>The convention in this repo is more verbose but also more informative.
+The overhead pays for itself given the project is a small POC where
+provenance matters for fact-checking.</p>
+
+<p>
+  <a href="overview.html">back to overview</a>
+</p>
+
+<hr style="margin:1em 0">
+<footer style="font-size:x-small;color:#888">
+    <p>Copyright &copy; 2016-2026 Roland Horsch &mdash; GPLv3-or-later.
+    <strong>ABSOLUTELY NO WARRANTY.</strong></p>
+    <p>Impressum:
+    <a href="https://github.com/dib2x/dib2x.github.io/blob/main/IMPRESSUM.md">https://github.com/dib2x/dib2x.github.io/blob/main/IMPRESSUM.md</a>
+    (vgl. https://magentacloud.de/s/29EPcM7DTJSbq87).
+    </p>
+</footer>
+<p style="font-size:x-small;color:#888">Created with AI assistance &mdash; see HTML source for the specific details of this file.</p>
+
+</body>
+</html>
