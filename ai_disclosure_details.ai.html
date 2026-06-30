@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html ai-disclosure="ai-generated" ai-model="big-pickle" ai-tool="opencode">
+<!-- ai-disclosure: ai-generated -->
+<!-- ai-model: big-pickle -->
+<!-- ai-tool: opencode -->
+<!-- ai-reviewer: Roland Horsch -->
+<!-- ai-review-date: 2026-06-23 -->
+<!-- ai-session-date: 2026-05-27 -->
+<!-- ai-prompt-summary: AI disclosure conventions page -->
+<!-- ai-session-date: 2026-06-23 -->
+<!-- ai-prompt-summary: added external convention references -->
+<!-- ai-session-date: 2026-06-23 -->
+<!-- ai-prompt-summary: extended HTML disclosure convention with reviewer, tool, multi-session attributes -->
+<!-- ai-session-date: 2026-06-23 -->
+<!-- ai-prompt-summary: Java key-value comment format convention -->
+<head>
+    <title>AI disclosure conventions — BWQ</title>
+    <link rel="stylesheet" href="css/rho.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="ai-disclosure" content="ai-generated">
+    <style>
+        body { max-width: 56em; margin: 1em auto; padding: 0 1em; line-height: 1.5; }
+        h2 { margin-top: 1.5em; border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        h3 { margin-top: 1.2em; }
+        table { border-collapse: collapse; margin: 1em 0; font-size: 0.9em; }
+        th, td { border: 1px solid #bbb; padding: 0.4em 0.7em; text-align: left; }
+        th { background: #ddd; }
+        code, kbd { background: #e8e8e8; padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.92em; }
+        pre { background: #e8e8e8; padding: 0.6em 1em; border-radius: 4px; overflow-x: auto; font-size: 0.88em; }
+        .note { color: #555; font-size: 0.9em; margin: 1em 0; }
+    </style>
+</head>
+<body>
+
+<sub style="position: absolute; right: 0">(AI disclosure: ai-generated &mdash; see page source for details)</sub>
+<h2>AI disclosure conventions used in the repositories</h2>
+
+<p>Common alternatives seen elsewhere:</p>
+
+<table>
+<tr><th>Approach</th><th>Pro</th><th>Con</th></tr>
+<tr><td>Co-authored-by: AI &lt;...&gt; in commit trailers</td><td>Blocks in git history</td><td>Invisible outside git log/blame</td></tr>
+<tr><td>Header comment only (no suffix)</td><td>Less rename churn</td><td>Not visible in ls/glob</td></tr>
+<tr><td>Git commit prefix "[ai]"</td><td>Ties metadata to commits</td><td>Doesn't mark individual files</td></tr>
+<tr><td>.gitattributes linguist-generated</td><td>Hides from diff stats</td><td>No provenance info</td></tr>
+<tr><td>No convention at all</td><td>Zero overhead</td><td>No audit trail at all</td></tr>
+</table>
+
+<div>
+<p>More structured external conventions using the same four-level vocabulary
+(<code>none</code>, <code>ai-assisted</code>, <code>ai-generated</code>, <code>autonomous</code>):</p>
+
+<ul>
+<li><b>HTML element-level attribute</b> &mdash;
+https://github.com/dweekly/ai-content-disclosure<br>
+Proposes an <code>ai-disclosure</code> global attribute and
+<code>&lt;meta name=&quot;ai-disclosure&quot;&gt;</code> tag,
+aligned with the IETF AI-Disclosure header and IPTC Digital Source Type vocabulary.
+Supports per-element granularity via attribute inheritance and optional
+<code>ai-model</code>, <code>ai-provider</code>, <code>ai-prompt-url</code> metadata.</li>
+<li><b>SPDX-style file headers</b> &mdash;
+https://github.com/ggfevans/ai-disclosure<br>
+Uses <code>SPDX-AI-Disclosure:</code> tags in source-file comments
+(same vocabulary) plus an optional <code>AI_DISCLOSURE.md</code> with
+YAML frontmatter at repo root. Supports per-field metadata
+(<code>SPDX-AI-Model</code>, <code>SPDX-AI-Provider</code>,
+<code>SPDX-AI-Scope</code>, <code>SPDX-AI-Date</code>) and
+inheritance from repo default to file override.</li>
+</ul>
+</div>
+
+<div>
+
+<p>The convention in this repo is more verbose but also more informative.
+The overhead pays for itself given the project is a small POC where
+provenance matters for fact-checking.</p>
+
+<h3>HTML convention for this repo</h3>
+
+<p>The standard metadata keys from the summary page apply; HTML also supports
+direct attribute syntax on the <code>&lt;html&gt;</code> element &mdash; see examples below.</p>
+
+<p>Values not set on a file inherit from <code>AI_DISCLOSURE.md</code>.
+Values not set on an element inherit from the nearest ancestor
+element.  The <code>ai-disclosure</code> level itself is never
+inherited from <code>AI_DISCLOSURE.md</code> - it must always be
+explicit in each AI-involved file's header.</p>
+
+<p>An <code>ai-disclosure</code> value of <code>"ai-generated"</code> at the
+file level means AI-authored with human assistance (prompting,
+corrections, review).  Otherwise, elements inside the file that differ from the
+file-level value set their own attribute, so a
+separate <code>"mixed"</code> file-level value is never needed &mdash;
+the file header says what the file as a whole is; local overrides
+handle the rest.</p>
+
+<p><b>File header as session summary.</b>
+The file header's HTML comment lists those AI sessions that
+affect the file as a whole. Otherwise AI involvement is marked
+locally. Example:</p>
+
+<pre>&lt;!-- ai-disclosure: ai-generated --&gt;
+&lt;!-- ai-model: big-pickle --&gt;
+&lt;!-- ai-tool: opencode --&gt;
+&lt;!-- ai-reviewer: Roland Horsch --&gt;
+&lt;!-- ai-review-date: 2026-06-23 --&gt;
+&lt;!-- ai-session-date: 2026-05-27 --&gt;
+&lt;!-- ai-prompt-summary: AI disclosure conventions page --&gt;
+&lt;!-- ai-session-date: 2026-06-23 --&gt;
+&lt;!-- ai-prompt-summary: added external convention references --&gt;
+&lt;!-- ai-session-date: 2026-06-23 --&gt;
+&lt;!-- ai-prompt-summary: extended HTML disclosure convention --&gt;
+&lt;!-- ai-session-date: 2026-06-23 --&gt;
+&lt;!-- ai-prompt-summary: Java key-value comment format convention --&gt;</pre>
+
+<p><b>Multiple AI sessions per file.</b> When a file is built from
+several AI sessions (e.g. <code>timekeeping.ai.html</code>),
+list them as <code>ai-session-date</code> / <code>ai-prompt-summary</code>
+pairs in the header comments or locally, following the same key-value format used
+in Java <code>_AI</code> files.</p>
+
+<h3>Equivalent convention for Java (and other languages)</h3>
+
+<p>The HTML convention uses tag attributes for structured metadata.
+For languages without such a mechanism, the same information can be
+carried in <b>standardized comment lines</b> at the file header, with
+inline comments for local overrides.  A consistent <b>key-value
+format</b> works across all
+languages and stays trivially grep-able:</p>
+
+<pre>// ai-disclosure: ai-generated
+// ai-model: big-pickle
+// ai-tool: opencode
+// ai-reviewer: Roland Horsch
+// ai-review-date: 2026-05-07
+// ai-prompt-summary: roundForRxxUsage() tests</pre>
+
+<p>The keys match the HTML attribute names exactly, keeping the
+convention uniform regardless of language.  When a file is built
+from multiple AI sessions, list them as <code>ai-session-date</code>
+entries after the single <code>ai-review-date</code>.  Only
+<code>ai-disclosure</code> is shared at file level; each session
+brings its own <code>ai-prompt-summary</code> and, if they differ
+from the file-level values, its own <code>ai-model</code> and
+<code>ai-tool</code> etc.  Within each session block
+<code>ai-session-date</code> always precedes
+its further entries:</p>
+
+<pre>// ai-disclosure: ai-generated
+// ai-model: big-pickle
+// ai-tool: opencode
+// ai-reviewer: Roland Horsch
+// ai-review-date: 2026-05-26
+// ai-session-date: 2026-05-23
+// ai-prompt-summary: initial description
+// ai-session-date: 2026-05-25
+// ai-prompt-summary: row updates, date rounding
+// ai-session-date: 2026-05-26
+// ai-prompt-summary: split from localhost.run</pre>
+
+<p>Custom annotations (e.g. <code>@AiDisclosure("ai-assisted")</code>)
+would be the more structured equivalent, but comments keep the barrier
+low and avoid a dependency.  The <code>_AI</code> / <code>.ai</code>
+filename suffix works alongside either approach to make AI-generated
+files visible at the filesystem level.</p>
+
+</div>
+
+<p>
+  <a href="overview.html">back to overview</a>
+</p>
+
+<hr style="margin:1em 0">
+<footer style="font-size:x-small;color:#888">
+    <p>Copyright &copy; 2016-2026 Roland Horsch &mdash; GPLv3-or-later.
+    <strong>ABSOLUTELY NO WARRANTY.</strong></p>
+    <p>Impressum:
+    <a href="https://github.com/dib2x/dib2x.github.io/blob/main/IMPRESSUM.md">https://github.com/dib2x/dib2x.github.io/blob/main/IMPRESSUM.md</a>
+    (vgl. https://magentacloud.de/s/29EPcM7DTJSbq87).
+    </p>
+</footer>
+<p style="font-size:x-small;color:#888">Created with AI assistance &mdash; see HTML source for the specific details of this file.</p>
+
+</body>
+</html>
