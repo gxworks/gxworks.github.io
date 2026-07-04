@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html ai-disclosure="ai-generated" ai-model="big-pickle" ai-tool="opencode">
+<!-- ai-disclosure: ai-generated -->
+<!-- ai-model: big-pickle -->
+<!-- ai-tool: opencode -->
+<!-- ai-reviewer: (see Git history) -->
+<!-- ai-review-date: 2026-06-26 (last review for this file) -->
+<!-- ai-prompt-summary: summary of AI disclosure information (markdown → HTML conversion, opencode / big-pickle, 2026-06-25) -->
+<head>
+    <title>AI Disclosure Examples — BWQ repository</title>
+    <link rel="stylesheet" href="css/rho.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="ai-disclosure" content="ai-generated">
+    <style>
+        body { max-width: 48em; margin: 1em auto; padding: 0 1em; line-height: 1.5; }
+        h1 { margin-top: 0.5em; }
+        h2 { margin-top: 1.5em; border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+        h3 { margin-top: 1.2em; }
+        table { border-collapse: collapse; margin: 1em 0; font-size: 0.9em; }
+        th, td { border: 1px solid #bbb; padding: 0.4em 0.7em; text-align: left; }
+        th { background: #ddd; }
+        code, kbd { background: #e8e8e8; padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.92em; }
+        pre { background: #e8e8e8; padding: 0.6em 1em; border-radius: 4px; overflow-x: auto; font-size: 0.88em; }
+        .note { color: #555; font-size: 0.9em; margin: 1em 0; }
+    </style>
+</head>
+<body>
+
+<sub style="position: absolute; right: 0">(AI disclosure: ai-generated &mdash; see page source for details)</sub>
+<h1>AI Disclosure Examples for BWQ Repository</h1>
+
+<h2>Metadata keys</h2>
+
+<p>Header metadata uses <code>key: value</code> pairs in the host language's comment
+syntax.  The same keys apply everywhere:</p>
+
+<table>
+<tr><th>Key</th><th>Purpose</th><th>Required</th></tr>
+<tr><td><code>ai-disclosure</code></td><td>AI involvement level: <code>none</code>, <code>ai-assisted</code>, <code>ai-generated</code>, or <code>autonomous</code></td><td>Always</td></tr>
+<tr><td><code>ai-model</code></td><td>Model identifier</td><td>Recommended (default: <code>big-pickle</code>)</td></tr>
+<tr><td><code>ai-tool</code></td><td>Tool / agent</td><td>Recommended (default: <code>opencode</code>)</td></tr>
+<tr><td><code>ai-provider</code></td><td>Model provider</td><td>If applicable</td></tr>
+<tr><td><code>ai-reviewer</code></td><td>Reviewer name</td><td>Locally</td></tr>
+<tr><td><code>ai-review-date</code></td><td>Review date (ISO)</td><td>Locally</td></tr>
+<tr><td><code>ai-session-date</code></td><td>AI session date</td><td>Per session, before its summary</td></tr>
+<tr><td><code>ai-prompt-summary</code></td><td>Summary of the key prompts (user input) that generated the file's contents</td><td>Per session</td></tr>
+</table>
+
+<p>Values not set on a file inherit from this file's defaults.  The
+<code>ai-disclosure</code> value itself is never inherited — it must be explicit
+in every AI-involved file.</p>
+
+<p><b>Reviewer convention.</b>
+The examples below use <code>ai-reviewer: (see Git history)</code> as a
+simplification — Git history provides reviewer identity, date, and granularity
+for any change.  This is <em>not compulsory</em>: a named person is still valid.
+The <code>ai-review-date</code> is kept in the header as the
+date of the last file-level review.</p>
+
+<p><b>Multiple AI sessions per file.</b>
+Only sessions that affect the file as a whole belong in the header.
+Sessions that only affect specific sections should be annotated
+locally near the changed lines, not in the header.
+Local annotations use the same <code>ai-session-date</code> /
+<code>ai-prompt-summary</code> pair, without <code>ai-reviewer</code> or
+<code>ai-review-date</code> (which live only in the header).
+Within each pair, <code>ai-session-date</code> always precedes its
+<code>ai-prompt-summary</code> and other session-related entries.</p>
+
+<p><b>Visible hint (HTML / Markdown).</b>
+HTML and Markdown files carry a small visible hint near the page header
+stating the AI involvement level and directing readers to the source comments.
+The detailed metadata stays in non-visible comments.</p>
+
+<h2>Examples per language</h2>
+
+<pre>// Java / C / C++ (single session with local edits)
+// ai-disclosure: ai-generated
+// ai-model: big-pickle
+// ai-tool: opencode
+// ai-reviewer: (see Git history)
+// ai-review-date: 2026-06-26 (last review for this file)</pre>
+
+<pre>// Java / C / C++ (multiple sessions, AI-assisted)
+// ai-disclosure: ai-assisted
+// ai-model: big-pickle
+// ai-tool: opencode
+// ai-reviewer: (see Git history)
+// ai-review-date: 2026-06-23 (last review for this file)
+// ai-session-date: 2026-05-07
+// ai-prompt-summary: AI disclosure conventions
+// ai-session-date: 2026-05-20
+// ai-prompt-summary: D4 definition
+// ai-session-date: 2026-06-23
+// ai-prompt-summary: HT description</pre>
+
+<pre># Python / Ruby / shell (single session, AI-generated)
+# ai-disclosure: ai-generated
+# ai-model: big-pickle
+# ai-tool: opencode
+# ai-reviewer: (see Git history)
+# ai-review-date: 2026-06-20 (last review for this file)
+# ai-prompt-summary: AI disclosure conventions page</pre>
+
+<pre># Bash / shell (AI-assisted: header + local annotation)
+# ai-disclosure: ai-assisted
+# ai-model: big-pickle
+# ai-tool: opencode
+# ai-reviewer: (see Git history)
+# ai-review-date: 2026-06-26 (last review for this file)
+# ai-prompt-summary: overall description; only global sessions belong here
+
+...
+
+# ai-session-date: 2026-06-26
+# ai-prompt-summary: specific local change description</pre>
+
+<pre>&lt;!-- HTML / Markdown (AI-assisted: header with visible hint) --&gt;
+&lt;!-- ai-disclosure: ai-assisted --&gt;
+&lt;!-- ai-model: big-pickle --&gt;
+&lt;!-- ai-tool: opencode --&gt;
+&lt;!-- ai-reviewer: (see Git history) --&gt;
+&lt;!-- ai-review-date: 2026-06-26 (last review for this file) --&gt;
+
+&lt;sub&gt;AI disclosure: ai-assisted &amp;mdash; see source comments for details&lt;/sub&gt;
+
+...
+
+&lt;!-- ai-session-date: 2026-06-26 --&gt;
+&lt;!-- ai-prompt-summary: specific local change description --&gt;</pre>
+
+<pre>-- SQL / other dash-comment languages
+-- ai-disclosure: ai-assisted
+-- ai-model: big-pickle</pre>
+
+<p>
+  <b>See also:</b>
+  <a href="ai_conventions.ai.md">conventions</a> &middot;
+  <a href="ai_disclosure_checklist.ai.md">checklist</a> &middot;
+  <a href="ai_disclosure_details.ai.html">details</a>
+</p>
+
+<p><a href="index.html">back to demo</a></p>
+
+</body>
+</html>
