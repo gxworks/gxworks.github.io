@@ -128,6 +128,6 @@ Date may be omitted for single-session local edits.
 ## Related files
 
 - [`AI_DISCLOSURE.md`](AI_DISCLOSURE.md) — repo-level default
-- [`src/main/webapp/ai_disclosure_examples.ai.html`](src/main/webapp/ai_disclosure_examples.ai.html) — examples per language
-- [`src/main/webapp/ai_disclosure_details.ai.html`](src/main/webapp/ai_disclosure_details.ai.html) — rationale and conventions discussion
-- [`src/main/webapp/ai_disclosure_checklist.ai.md`](src/main/webapp/ai_disclosure_checklist.ai.md) — operational checklist
+- [`src/main/webapp/ai_disclosure_examples.ai.html`](ai_disclosure_examples.ai.html) — examples per language
+- [`src/main/webapp/ai_disclosure_details.ai.html`](ai_disclosure_details.ai.html) — rationale and conventions discussion
+- [`src/main/webapp/ai_disclosure_checklist.ai.md`](ai_disclosure_checklist.ai.md) — operational checklist
