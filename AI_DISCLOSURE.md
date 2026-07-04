@@ -40,6 +40,6 @@ repository, as far as they originate from it).
 See ai_conventions.ai.md for the full reference.
 
 See also:<br>
-- [BWQ AI disclosure conventions](https://gxworks.github.io/ai_conventions.ai.md)<br>
+- [BWQ AI disclosure conventions](https://github.com/gxworks/gxworks.github.io/blob/main/ai_conventions.ai.md)<br>
 - dweekly/ai-content-disclosure: https: // github.com/dweekly/ai-content-disclosure<br>
 - ggfevans/ai-disclosure: https: // github.com/ggfevans/ai-disclosure
